@@ -678,3 +678,163 @@ body {
     border-color: var(--accent-color);
     background-color: rgba(255, 69, 0, 0.1);
 }
+
+/* ========================================
+   15. 검색 결과 스타일
+   ======================================== */
+.search-results {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 900px;
+    max-height: calc(100vh - 100px);
+    overflow-y: auto;
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    z-index: 900;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.search-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.search-header h3 {
+    font-size: 1.2rem;
+    color: var(--text-primary);
+}
+
+.search-count {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.search-empty {
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.search-error {
+    padding: 2rem;
+    text-align: center;
+    color: #f44336;
+}
+
+.search-result {
+    background-color: var(--bg-tertiary);
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.search-result:hover {
+    border-color: var(--border-hover);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.search-result-post {
+    border-left: 3px solid var(--accent-color);
+}
+
+.search-result-comment {
+    border-left: 3px solid #4CAF50;
+}
+
+.search-result-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.search-result-type {
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+}
+
+.search-result-type.post {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.search-result-type.comment {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.search-result-community {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.search-result-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.search-result-title a {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.search-result-title a:hover {
+    color: var(--accent-color);
+}
+
+.search-result-content {
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
+}
+
+.search-result-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.search-result-author {
+    font-weight: bold;
+}
+
+.search-result-score {
+    color: var(--accent-color);
+}
+
+.search-result-date {
+    margin-left: auto;
+}
+
+/* 검색 결과 닫기 버튼 */
+.search-close {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.search-close:hover {
+    color: var(--text-primary);
+}

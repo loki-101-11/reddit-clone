@@ -149,8 +149,8 @@
 ---
 
 ## 📊 진행 상태
-- 총 작업: 13개
-- 완료: 9개
+- 총 작업: 14개
+- 완료: 10개
 - 진행 중: 0개
 - 대기: 4개
 
@@ -168,12 +168,20 @@
 - **검증**: 회원가입, 로그인, 로그아웃, 권한 검사 테스트
 
 #### TASK-014: 검색 기능 구현
-- **파일**: `routes/search.js`, `public/js/search.js`
+- **완료 날짜**: 2026-02-10
+- **파일**: `routes/search.js`, `public/js/search.js`, `public/css/style.css`
 - **작업**:
-  1. 게시글 제목/내용 검색 API
-  2. 댓글 검색 API
-  3. 검색 결과 UI 렌더링
+  1. 게시글 제목/내용 검색 API (`GET /api/search/posts`)
+  2. 댓글 검색 API (`GET /api/search/comments`)
+  3. 통합 검색 API (`GET /api/search`)
+  4. 검색 결과 UI 렌더링 (게시글/댓글 구분)
+  5. 실시간 검색 (딜레이 300ms)
+  6. 검색 결과 닫기 (ESC 키, 버튼)
 - **검증**: 검색어 입력 및 결과 표시 테스트
+  - 게시글 검색: 제목/내용 LIKE 검색
+  - 댓글 검색: 댓글 내용 LIKE 검색
+  - 통합 검색: 게시글 + 댓글 병합 결과
+  - UI: 검색 결과 팝업, 닫기 기능, 날짜 포맷팅
 
 #### TASK-015: 알림 시스템
 - **파일**: `routes/notifications.js`, `db/schema.sql`
