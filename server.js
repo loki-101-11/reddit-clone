@@ -11,10 +11,12 @@ const postsRouter = require('./routes/posts');
 const votesRouter = require('./routes/votes');
 const commentsRouter = require('./routes/comments');
 const communitiesRouter = require('./routes/communities');
+const authRouter = require('./routes/auth');
 app.use('/api/posts', postsRouter);
 app.use('/api/posts', votesRouter);
 app.use('/api', commentsRouter);
 app.use('/api/communities', communitiesRouter);
+app.use('/api/auth', authRouter);
 
 console.log('API routes registered');
 

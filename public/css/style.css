@@ -119,6 +119,40 @@ body {
     background-color: var(--accent-hover);
 }
 
+/* 인증 버튼 */
+.auth-btn {
+    padding: 0.5rem 1.5rem;
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.auth-btn:hover {
+    background-color: var(--bg-hover);
+    border-color: var(--accent-color);
+}
+
+.logout-btn {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border-color);
+}
+
+.logout-btn:hover {
+    background-color: #f44336;
+    border-color: #f44336;
+    color: white;
+}
+
+.username-display {
+    color: var(--text-primary);
+    font-weight: bold;
+    margin-right: 1rem;
+}
+
 /* ========================================
    4. 컨테이너 및 레이아웃
    ======================================== */
@@ -604,4 +638,43 @@ body {
 
 .hidden {
     display: none !important;
+}
+
+/* 인증 모달 */
+.auth-form {
+    display: none;
+}
+
+.auth-form.active {
+    display: block;
+}
+
+/* 알림 */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 1rem 1.5rem;
+    border-radius: var(--border-radius);
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-weight: bold;
+    z-index: 2000;
+    animation: fadeIn 0.3s ease;
+}
+
+.notification.success {
+    border-color: #4CAF50;
+    background-color: rgba(76, 175, 80, 0.1);
+}
+
+.notification.error {
+    border-color: #f44336;
+    background-color: rgba(244, 67, 54, 0.1);
+}
+
+.notification.info {
+    border-color: var(--accent-color);
+    background-color: rgba(255, 69, 0, 0.1);
 }

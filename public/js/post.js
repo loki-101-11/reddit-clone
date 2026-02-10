@@ -1,10 +1,15 @@
 // Reddit Clone - 게시글 상세 페이지 로직
+// 작성일: 2026-02-10
+
+// 인증 모듈 가져오기
+const { getToken, getAuthHeaders } = require('./auth.js');
 
 const state = {
     postId: null,
     post: null,
     comments: [],
-    currentUser: 'guest'
+    currentUser: 'guest',
+    token: getToken()
 };
 
 // ========================================
@@ -40,9 +45,7 @@ async function createComment(postId, commentData) {
     try {
         const response = await fetch(`/api/posts/${postId}/comments`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: getAuthHeaders(),
             body: JSON.stringify(commentData)
         });
         if (!response.ok) throw new Error('댓글을 작성하는데 실패했습니다.');
@@ -346,6 +349,9 @@ async function init() {
         document.getElementById('backBtn').addEventListener('click', () => {
             window.location.href = 'index.html';
         });
+
+        // 인증 초기화
+        initAuth();
 
     } catch (error) {
         console.error('초기화 실패:', error);
