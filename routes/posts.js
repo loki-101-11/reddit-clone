@@ -4,8 +4,38 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db/db.js');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
 console.log('Posts router loaded');
+
+// Multer 설정 (이미지 업로드)
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const uploadDir = 'public/uploads';
+        if (!fs.existsSync(uploadDir)) {
+            fs.mkdirSync(uploadDir, { recursive: true });
+        }
+        cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ 
+    storage: storage,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB 제한
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('이미지 파일만 업로드 가능합니다.'));
+        }
+    }
+});
 
 // GET /api/posts - 전체 게시글 조회
 router.get('/', (req, res) => {
@@ -64,9 +94,15 @@ router.get('/:id', (req, res) => {
 });
 
 // POST /api/posts - 게시글 생성
-router.post('/', (req, res) => {
+router.post('/', upload.single('image'), (req, res) => {
     try {
         const { title, content, author, community } = req.body;
+        
+        // 이미지 파일 처리
+        let image_url = null;
+        if (req.file) {
+            image_url = '/uploads/' + req.file.filename;
+        }
 
         if (!title || !content || !author || !community) {
             return res.status(400).json({
@@ -76,9 +112,9 @@ router.post('/', (req, res) => {
         }
 
         const result = db.prepare(`
-            INSERT INTO posts (title, content, author, community)
-            VALUES (?, ?, ?, ?)
-        `).run(title, content, author, community);
+            INSERT INTO posts (title, content, author, community, image_url)
+            VALUES (?, ?, ?, ?, ?)
+        `).run(title, content, author, community, image_url);
 
         const newPost = db.prepare('SELECT * FROM posts WHERE id = ?').get(result.lastInsertRowid);
 

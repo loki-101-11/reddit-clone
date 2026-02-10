@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로필 - Reddit Clone</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 헤더 -->
+        <header class="header">
+            <div class="logo">Reddit Clone</div>
+            <div class="header-right">
+                <button id="backBtn" class="btn btn-secondary">← 뒤로가기</button>
+            </div>
+        </header>
+
+        <!-- 프로필 정보 -->
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <div class="avatar-placeholder">👤</div>
+            </div>
+            <div class="profile-info">
+                <h1 id="username" class="profile-username">사용자명</h1>
+                <p id="joinDate" class="profile-join-date">가입일: 2026-02-10</p>
+            </div>
+        </div>
+
+        <!-- 카르마 및 통계 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="postsCount">0</div>
+                <div class="stat-label">게시글</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="commentsCount">0</div>
+                <div class="stat-label">댓글</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="karma">0</div>
+                <div class="stat-label">카르마</div>
+            </div>
+        </div>
+
+        <!-- 최근 활동 -->
+        <div class="activity-section">
+            <h2>최근 게시글</h2>
+            <div id="recentPosts" class="posts-list">
+                <!-- 게시글 목록이 여기에 렌더링됨 -->
+            </div>
+        </div>
+
+        <div class="activity-section">
+            <h2>최근 댓글</h2>
+            <div id="recentComments" class="comments-list">
+                <!-- 댓글 목록이 여기에 렌더링됨 -->
+            </div>
+        </div>
+    </div>
+
+    <script src="js/profile.js"></script>
+</body>
+</html>

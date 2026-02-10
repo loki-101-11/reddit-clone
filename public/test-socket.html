@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.io 테스트 페이지</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #1a1a2e;
+            color: #e0e0e0;
+        }
+        .test-section {
+            background-color: #16213e;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        h1 {
+            color: #e94560;
+        }
+        button {
+            background-color: #e94560;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #c0354a;
+        }
+        .log {
+            background-color: #0f3460;
+            padding: 15px;
+            border-radius: 5px;
+            height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-bottom: 1px solid #1a1a2e;
+        }
+        .success {
+            color: #4caf50;
+        }
+        .error {
+            color: #f44336;
+        }
+        .info {
+            color: #2196f3;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔌 Socket.io 통합 테스트</h1>
+
+    <div class="test-section">
+        <h2>1. Socket.io 연결 테스트</h2>
+        <button onclick="testConnection()">연결 테스트</button>
+        <div id="connection-log" class="log"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. 게시글 업보트 테스트</h2>
+        <button onclick="testUpvote()">업보트 테스트</button>
+        <div id="upvote-log" class="log"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. 게시글 다운보트 테스트</h2>
+        <button onclick="testDownvote()">다운보트 테스트</button>
+        <div id="downvote-log" class="log"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. 댓글 작성 테스트</h2>
+        <input type="text" id="comment-input" placeholder="댓글 내용" style="width: 100%; padding: 10px; margin: 5px 0;">
+        <button onclick="testComment()">댓글 작성 테스트</button>
+        <div id="comment-log" class="log"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. 실시간 알림 로그</h2>
+        <div id="realtime-log" class="log"></div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // Socket.io 클라이언트 연결
+        const socket = io();
+
+        // 로그 출력 함수
+        function addLog(elementId, message, type = 'info') {
+            const logElement = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logElement.appendChild(logEntry);
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        // 연결 테스트
+        function testConnection() {
+            socket.on('connect', () => {
+                addLog('connection-log', '✅ Socket.io 연결 성공!', 'success');
+            });
+
+            socket.on('disconnect', () => {
+                addLog('connection-log', '❌ Socket.io 연결 종료', 'error');
+            });
+
+            socket.on('connect_error', (error) => {
+                addLog('connection-log', `❌ 연결 오류: ${error.message}`, 'error');
+            });
+
+            socket.on('post_upvoted', (data) => {
+                addLog('realtime-log', `⬆️ 게시글 업보트: ${data.post.title}`, 'success');
+            });
+
+            socket.on('post_downvoted', (data) => {
+                addLog('realtime-log', `⬇️ 게시글 다운보트: ${data.post.title}`, 'success');
+            });
+
+            socket.on('new_comment', (data) => {
+                addLog('realtime-log', `💬 새 댓글: ${data.comment.author} - ${data.comment.content.substring(0, 30)}...`, 'success');
+            });
+
+            socket.on('comment_removed', (data) => {
+                addLog('realtime-log', `🗑️ 댓글 삭제: ${data.commentId}`, 'success');
+            });
+
+            socket.on('new_post', (data) => {
+                addLog('realtime-log', `📝 새 게시글: ${data.post.title}`, 'success');
+            });
+
+            addLog('connection-log', '📡 연결 상태 확인 중...', 'info');
+        }
+
+        // 업보트 테스트
+        function testUpvote() {
+            socket.emit('upvote_post', {
+                postId: 1,
+                post: testPost,
+                userId: 'test_user',
+                timestamp: new Date().toISOString()
+            });
+            addLog('upvote-log', '📤 업보트 이벤트 전송', 'info');
+        }
+
+        // 다운보트 테스트
+        function testDownvote() {
+            socket.emit('downvote_post', {
+                postId: 1,
+                post: testPost,
+                userId: 'test_user',
+                timestamp: new Date().toISOString()
+            });
+            addLog('downvote-log', '📤 다운보트 이벤트 전송', 'info');
+        }
+
+        // 댓글 테스트
+        function testComment() {
+            const content = document.getElementById('comment-input').value;
+            if (!content) {
+                addLog('comment-log', '❌ 댓글 내용을 입력해주세요.', 'error');
+                return;
+            }
+
+            socket.emit('comment_created', {
+                postId: 1,
+                post: testPost,
+                comment: {
+                    id: 1,
+                    post_id: 1,
+                    parent_id: null,
+                    content: content,
+                    author: 'test_user',
+                    score: 0,
+                    created_at: new Date().toISOString()
+                },
+                userId: 'test_user',
+                timestamp: new Date().toISOString()
+            });
+            addLog('comment-log', '📤 댓글 작성 이벤트 전송', 'info');
+        }
+    </script>
+</body>
+</html>

@@ -1,6 +1,9 @@
 // Reddit Clone - 게시글 상세 페이지 로직
 // 작성일: 2026-02-10
 
+// Socket.io 클라이언트 연결
+const socket = io();
+
 // 인증 모듈 가져오기
 const { getToken, getAuthHeaders } = require('./auth.js');
 
@@ -131,6 +134,7 @@ function renderPostDetail(post) {
             <span class="post-community">r/${post.community}</span>
         </div>
         <h1 class="post-title" style="font-size: 1.8rem;">${escapeHtml(post.title)}</h1>
+        ${post.image_url ? `<div class="post-image" style="margin-top: 1rem;"><img src="${post.image_url}" alt="Post Image" style="max-width: 100%; border-radius: 8px;"></div>` : ''}
         <div class="post-content" style="font-size: 1.1rem; margin-top: 1rem;">${escapeHtml(post.content)}</div>
         <div class="post-footer">
             <div class="vote-buttons">
@@ -360,3 +364,34 @@ async function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+// Socket.io 이벤트 리스너
+socket.on('post_upvoted', (data) => {
+    console.log('게시글 업보트 알림:', data);
+    const voteCount = document.querySelector('.vote-count');
+    if (voteCount) {
+        voteCount.textContent = data.post.score;
+    }
+});
+
+socket.on('post_downvoted', (data) => {
+    console.log('게시글 다운보트 알림:', data);
+    const voteCount = document.querySelector('.vote-count');
+    if (voteCount) {
+        voteCount.textContent = data.post.score;
+    }
+});
+
+socket.on('new_comment', (data) => {
+    console.log('새 댓글 알림:', data);
+    // 해당 게시글의 댓글 목록을 새로고침
+    const comments = await fetchComments(data.postId);
+    renderComments(comments);
+});
+
+socket.on('comment_removed', (data) => {
+    console.log('댓글 삭제 알림:', data);
+    // 해당 게시글의 댓글 목록을 새로고침
+    const comments = await fetchComments(data.postId);
+    renderComments(comments);
+});

@@ -233,6 +233,7 @@ function updateAuthUI(user) {
         if (registerButton) registerButton.style.display = 'none';
         if (logoutButton) logoutButton.style.display = 'block';
         if (usernameDisplay) {
+            usernameDisplay.href = `/profile.html?username=${user.username}`;
             usernameDisplay.textContent = `u/${user.username}`;
             usernameDisplay.style.display = 'inline-block';
         }

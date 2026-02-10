@@ -1,6 +1,9 @@
 // Reddit Clone - JavaScript 로직
 // 작성일: 2026-02-10
 
+// Socket.io 클라이언트 연결
+const socket = io();
+
 // 인증 상태 확인 유틸리티 (auth.js의 함수들을 직접 사용하거나 로컬 정의)
 function getLocalToken() {
     return localStorage.getItem('authToken');
@@ -59,10 +62,21 @@ async function fetchPost(id) {
 // 게시글 작성
 async function createPost(postData) {
     try {
+        const headers = getLocalAuthHeaders();
+        let body;
+
+        if (postData instanceof FormData) {
+            // FormData인 경우 Content-Type 헤더를 제거 (브라우저가 boundary 설정)
+            delete headers['Content-Type'];
+            body = postData;
+        } else {
+            body = JSON.stringify(postData);
+        }
+
         const response = await fetch('/api/posts', {
             method: 'POST',
-            headers: getLocalAuthHeaders(),
-            body: JSON.stringify(postData)
+            headers: headers,
+            body: body
         });
         const result = await response.json();
         if (!response.ok) {
@@ -237,6 +251,7 @@ function renderPosts(posts) {
                 <span class="time">${formatDate(post.created_at)}</span>
             </div>
             <h3 class="post-title">${escapeHtml(post.title)}</h3>
+            ${post.image_url ? `<div class="post-image"><img src="${post.image_url}" alt="Post Image" style="max-width: 100%; border-radius: 8px; margin: 10px 0;"></div>` : ''}
             <p class="post-content">${escapeHtml(post.content)}</p>
             <div class="post-footer">
                 <div class="votes">
@@ -337,9 +352,21 @@ async function handleCreatePost(e) {
     const title = document.getElementById('postTitle').value.trim();
     const content = document.getElementById('postContent').value.trim();
     const community = document.getElementById('postCommunity').value;
+    const imageFile = document.getElementById('postImage').files[0];
 
     try {
-        await createPost({ title, content, community });
+        let postData;
+        if (imageFile) {
+            postData = new FormData();
+            postData.append('title', title);
+            postData.append('content', content);
+            postData.append('community', community);
+            postData.append('image', imageFile);
+        } else {
+            postData = { title, content, community };
+        }
+
+        await createPost(postData);
         closeModal();
         document.getElementById('createPostForm').reset();
         loadPosts();
@@ -374,12 +401,97 @@ async function initApp() {
 
     const createBtn = document.getElementById('createPostBtn');
     if (createBtn) createBtn.onclick = openModal;
-    
+
     const closeBtn = document.getElementById('closeModalBtn');
     if (closeBtn) closeBtn.onclick = closeModal;
 
     const form = document.getElementById('createPostForm');
     if (form) form.onsubmit = handleCreatePost;
+
+    // Socket.io 이벤트 리스너
+    socket.on('post_upvoted', (data) => {
+        console.log('게시글 업보트 알림:', data);
+        const card = document.querySelector(`.post-card[data-id="${data.postId}"]`);
+        if (card) {
+            card.querySelector('.score').textContent = data.post.score;
+        }
+    });
+
+    socket.on('post_downvoted', (data) => {
+        console.log('게시글 다운보트 알림:', data);
+        const card = document.querySelector(`.post-card[data-id="${data.postId}"]`);
+        if (card) {
+            card.querySelector('.score').textContent = data.post.score;
+        }
+    });
+
+    socket.on('new_comment', (data) => {
+        console.log('새 댓글 알림:', data);
+        // 해당 게시글의 댓글 섹션이 열려있으면 새 댓글을 추가
+        const section = document.getElementById(`comments-section-${data.postId}`);
+        if (section && section.style.display === 'block') {
+            const list = document.getElementById(`comments-list-${data.postId}`);
+            const comment = data.comment;
+            list.innerHTML = `
+                <div class="comment">
+                    <div class="comment-header"><b>u/${comment.author}</b> · ${formatDate(comment.created_at)}</div>
+                    <div class="comment-content">${escapeHtml(comment.content)}</div>
+                </div>
+            ` + list.innerHTML;
+        }
+    });
+
+    socket.on('comment_removed', (data) => {
+        console.log('댓글 삭제 알림:', data);
+        // 해당 게시글의 댓글 섹션이 열려있으면 새 댓글을 다시 로드
+        const section = document.getElementById(`comments-section-${data.postId}`);
+        if (section && section.style.display === 'block') {
+            const list = document.getElementById(`comments-list-${data.postId}`);
+            const comments = await fetchComments(data.postId);
+            list.innerHTML = comments.length ? comments.map(c => `
+                <div class="comment">
+                    <div class="comment-header"><b>u/${c.author}</b> · ${formatDate(c.created_at)}</div>
+                    <div class="comment-content">${escapeHtml(c.content)}</div>
+                </div>
+            `).join('') : '댓글이 없습니다.';
+        }
+    });
+
+    socket.on('new_post', (data) => {
+        console.log('새 게시글 알림:', data);
+        // 새 게시글을 목록 맨 위에 추가
+        const container = document.getElementById('postsContainer');
+        if (container) {
+            const newPost = data.post;
+            const postHtml = `
+                <article class="post-card" data-id="${newPost.id}">
+                    <div class="post-header">
+                        <span class="author">u/${newPost.author}</span>
+                        <span class="community">r/${newPost.community}</span>
+                        <span class="time">${formatDate(newPost.created_at)}</span>
+                    </div>
+                    <h3 class="post-title">${escapeHtml(newPost.title)}</h3>
+                    <p class="post-content">${escapeHtml(newPost.content)}</p>
+                    <div class="post-footer">
+                        <div class="votes">
+                            <button class="vote-btn up" onclick="handlePostVote(${newPost.id}, 'upvote')">⬆️</button>
+                            <span class="score">${newPost.score}</span>
+                            <button class="vote-btn down" onclick="handlePostVote(${newPost.id}, 'downvote')">⬇️</button>
+                        </div>
+                        <button class="comment-btn" onclick="toggleComments(${newPost.id})">💬 댓글</button>
+                    </div>
+                    <div id="comments-section-${newPost.id}" class="comments-section" style="display: none;">
+                        <div class="comment-form">
+                            <textarea id="comment-input-${newPost.id}" placeholder="댓글을 남겨보세요..."></textarea>
+                            <button onclick="handleCommentSubmit(${newPost.id})">작성</button>
+                        </div>
+                        <div id="comments-list-${newPost.id}" class="comments-list"></div>
+                    </div>
+                </article>
+            `;
+            container.insertAdjacentHTML('afterbegin', postHtml);
+        }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', initApp);
