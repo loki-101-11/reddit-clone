@@ -26,10 +26,13 @@ function isAuthenticated() {
 // API 요청 헤더 설정
 function getAuthHeaders() {
     const token = getToken();
-    return {
-        'Content-Type': 'application/json',
-        ...(token && { 'Authorization': `Bearer ${token}` })
+    const headers = {
+        'Content-Type': 'application/json'
     };
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+    return headers;
 }
 
 // 회원가입
@@ -37,7 +40,7 @@ async function register(username, password) {
     try {
         const response = await fetch(`${API_BASE}/auth/register`, {
             method: 'POST',
-            headers: getAuthHeaders(),
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
         });
 
@@ -62,7 +65,7 @@ async function login(username, password) {
     try {
         const response = await fetch(`${API_BASE}/auth/login`, {
             method: 'POST',
-            headers: getAuthHeaders(),
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
         });
 
@@ -92,19 +95,22 @@ async function logout() {
 
         if (response.ok) {
             removeToken();
-            window.location.href = '/';
+            window.location.reload();
         }
     } catch (error) {
         console.error('로그아웃 에러:', error);
         // 에러 발생해도 로컬 토큰 삭제
         removeToken();
-        window.location.href = '/';
+        window.location.reload();
     }
 }
 
 // 현재 사용자 정보 조회
 async function getCurrentUser() {
     try {
+        const token = getToken();
+        if (!token) return null;
+
         const response = await fetch(`${API_BASE}/auth/me`, {
             headers: getAuthHeaders()
         });
@@ -122,10 +128,24 @@ async function getCurrentUser() {
 }
 
 // 로그인/회원가입 모달 표시
-function showAuthModal() {
+function showAuthModal(mode = 'login') {
     const modal = document.getElementById('authModal');
-    if (modal) {
-        modal.classList.remove('hidden');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const title = document.getElementById('authModalTitle');
+
+    if (!modal) return;
+
+    modal.style.display = 'flex';
+    
+    if (mode === 'login') {
+        title.textContent = '로그인';
+        loginForm.style.display = 'block';
+        registerForm.style.display = 'none';
+    } else {
+        title.textContent = '회원가입';
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'block';
     }
 }
 
@@ -133,7 +153,7 @@ function showAuthModal() {
 function hideAuthModal() {
     const modal = document.getElementById('authModal');
     if (modal) {
-        modal.classList.add('hidden');
+        modal.style.display = 'none';
     }
 }
 
@@ -157,6 +177,9 @@ function setupLoginForm() {
 
             // 알림 표시
             showNotification('로그인되었습니다!', 'success');
+            
+            // 페이지 새로고침하여 상태 반영
+            setTimeout(() => window.location.reload(), 1000);
         } catch (error) {
             showNotification(error.message, 'error');
         }
@@ -189,6 +212,9 @@ function setupRegisterForm() {
 
             // 알림 표시
             showNotification('회원가입이 완료되었습니다!', 'success');
+            
+            // 페이지 새로고침하여 상태 반영
+            setTimeout(() => window.location.reload(), 1000);
         } catch (error) {
             showNotification(error.message, 'error');
         }
@@ -202,12 +228,19 @@ function updateAuthUI(user) {
     const logoutButton = document.getElementById('logoutButton');
     const usernameDisplay = document.getElementById('usernameDisplay');
 
-    if (loginButton) loginButton.style.display = 'none';
-    if (registerButton) registerButton.style.display = 'none';
-    if (logoutButton) logoutButton.style.display = 'block';
-    if (usernameDisplay) {
-        usernameDisplay.textContent = user.username;
-        usernameDisplay.style.display = 'block';
+    if (user) {
+        if (loginButton) loginButton.style.display = 'none';
+        if (registerButton) registerButton.style.display = 'none';
+        if (logoutButton) logoutButton.style.display = 'block';
+        if (usernameDisplay) {
+            usernameDisplay.textContent = `u/${user.username}`;
+            usernameDisplay.style.display = 'inline-block';
+        }
+    } else {
+        if (loginButton) loginButton.style.display = 'block';
+        if (registerButton) registerButton.style.display = 'block';
+        if (logoutButton) logoutButton.style.display = 'none';
+        if (usernameDisplay) usernameDisplay.style.display = 'none';
     }
 }
 
@@ -227,27 +260,43 @@ function showNotification(message, type = 'info') {
 
 // 페이지 로드 시 초기화
 function initAuth() {
-    // 로그인 폼 설정
+    // 버튼 이벤트 리스너
+    const loginBtn = document.getElementById('loginButton');
+    const registerBtn = document.getElementById('registerButton');
+    const closeAuthBtn = document.getElementById('closeAuthModalBtn');
+    const switchReg = document.getElementById('switchToRegister');
+    const switchLogin = document.getElementById('switchToLogin');
+
+    if (loginBtn) loginBtn.onclick = () => showAuthModal('login');
+    if (registerBtn) registerBtn.onclick = () => showAuthModal('register');
+    if (closeAuthBtn) closeAuthBtn.onclick = hideAuthModal;
+    if (switchReg) switchReg.onclick = (e) => { e.preventDefault(); showAuthModal('register'); };
+    if (switchLogin) switchLogin.onclick = (e) => { e.preventDefault(); showAuthModal('login'); };
+
+    // 폼 설정
     setupLoginForm();
     setupRegisterForm();
 
     // 로그아웃 버튼 설정
     const logoutButton = document.getElementById('logoutButton');
     if (logoutButton) {
-        logoutButton.addEventListener('click', logout);
+        logoutButton.onclick = logout;
     }
 
     // 인증 상태 확인
     if (isAuthenticated()) {
         getCurrentUser().then(user => {
-            if (user) {
-                updateAuthUI(user);
-            }
+            updateAuthUI(user);
         });
+    } else {
+        updateAuthUI(null);
     }
 }
 
-// 모듈로 내보내기
+// 초기화 호출
+document.addEventListener('DOMContentLoaded', initAuth);
+
+// 모듈로 내보내기 (require 지원 시)
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         register,
