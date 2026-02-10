@@ -16,7 +16,7 @@ const searchRouter = require('./routes/search');
 const notificationsRouter = require('./routes/notifications');
 const workerRouter = require('./routes/worker');
 app.use('/api/posts', postsRouter);
-app.use('/api/posts', votesRouter);
+app.use('/api/votes', votesRouter);
 app.use('/api', commentsRouter);
 app.use('/api/communities', communitiesRouter);
 app.use('/api/auth', authRouter);

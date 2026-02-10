@@ -30,7 +30,9 @@ try {
         const id = insertComment(args.postId, args.content, args.author, args.parentId);
         console.log(`Inserted comment ID: ${id}`);
     } else if (action === 'listPosts') {
-        const posts = db.prepare('SELECT * FROM posts ORDER BY created_at DESC LIMIT ?').all(args.limit || 10);
+        const limit = args.limit || 10;
+        const offset = args.offset || 0;
+        const posts = db.prepare('SELECT * FROM posts ORDER BY created_at DESC LIMIT ? OFFSET ?').all(limit, offset);
         console.log(JSON.stringify(posts));
     } else if (action === 'listComments') {
         const comments = db.prepare('SELECT * FROM comments WHERE post_id = ? ORDER BY created_at ASC').all(args.postId);
