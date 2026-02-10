@@ -23,16 +23,15 @@ const action = process.argv[2];
 const args = JSON.parse(process.argv[3] || '{}');
 
 try {
-    if (action === 'post') {
-        const id = insertPost(args.community, args.title, args.content, args.author);
-        console.log(`Inserted post ID: ${id}`);
-    } else if (action === 'comment') {
-        const id = insertComment(args.postId, args.content, args.author, args.parentId);
-        console.log(`Inserted comment ID: ${id}`);
-    } else if (action === 'listPosts') {
+    if (action === 'listPosts') {
         const limit = args.limit || 10;
         const offset = args.offset || 0;
-        const posts = db.prepare('SELECT * FROM posts ORDER BY created_at DESC LIMIT ? OFFSET ?').all(limit, offset);
+        const posts = db.prepare(`
+            SELECT p.*, (SELECT COUNT(*) FROM comments WHERE post_id = p.id) as comment_count 
+            FROM posts p 
+            ORDER BY created_at DESC 
+            LIMIT ? OFFSET ?
+        `).all(limit, offset);
         console.log(JSON.stringify(posts));
     } else if (action === 'listComments') {
         const comments = db.prepare('SELECT * FROM comments WHERE post_id = ? ORDER BY created_at ASC').all(args.postId);
