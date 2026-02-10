@@ -3,33 +3,29 @@
 ## 📋 작업 큐
 
 ### ✅ COMPLETED
-(완료된 작업)
+#### TASK-001: 프로젝트 초기화
+- **완료 날짜**: 2026-02-10
+- **작업 내용**: `npm init`, `express`, `better-sqlite3` 설치, `.gitignore` 생성
+
+#### TASK-002: Express 서버 기본 설정
+- **완료 날짜**: 2026-02-10
+- **작업 내용**: `server.js` 작성 및 기본 라우팅 설정 완료
 
 ---
 
 ### 🔄 IN_PROGRESS
-(현재 진행 중)
+#### TASK-003: 데이터베이스 스키마 설정
+- **파일**: `db/schema.sql`, `db/init.js`
+- **작업**:
+  1. posts 테이블 (id, title, content, author, score, community, created_at)
+  2. comments 테이블 (id, post_id, parent_id, content, author, score, created_at)
+  3. communities 테이블 (id, name, description, created_at)
+  4. init.js로 DB 초기화 함수
+- **검증**: `node db/init.js` 실행 후 reddit.db 파일 생성
 
 ---
 
 ### 📝 PENDING
-
-#### TASK-001: 프로젝트 초기화
-- **파일**: `package.json`, `.gitignore`
-- **작업**:
-  1. `npm init -y` 실행
-  2. express, sqlite3, better-sqlite3 설치
-  3. .gitignore 생성 (node_modules, *.db)
-- **검증**: `cat package.json` - dependencies 확인
-
-#### TASK-002: Express 서버 기본 설정
-- **파일**: `server.js`
-- **작업**:
-  1. Express 앱 생성
-  2. 정적 파일 서빙 (`public/`)
-  3. JSON 파싱 미들웨어
-  4. 포트 3000에서 리스닝
-- **검증**: `node server.js` 실행 후 localhost:3000 접속 가능
 
 #### TASK-003: 데이터베이스 스키마 설정
 - **파일**: `db/schema.sql`, `db/init.js`
