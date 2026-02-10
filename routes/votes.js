@@ -128,4 +128,34 @@ router.post('/:id/downvote', (req, res) => {
     }
 });
 
+// POST /api/comments/:id/upvote - 댓글 업보트
+router.post('/comments/:id/upvote', (req, res) => {
+    try {
+        const { id } = req.params;
+        const comment = db.prepare('SELECT * FROM comments WHERE id = ?').get(id);
+        if (!comment) return res.status(404).json({ success: false, error: '댓글을 찾을 수 없습니다' });
+
+        db.prepare('UPDATE comments SET score = score + 1 WHERE id = ?').run(id);
+        const updated = db.prepare('SELECT * FROM comments WHERE id = ?').get(id);
+        res.json({ success: true, data: updated, message: '댓글 업보트 완료' });
+    } catch (error) {
+        res.status(500).json({ success: false, error: '서버 에러' });
+    }
+});
+
+// POST /api/comments/:id/downvote - 댓글 다운보트
+router.post('/comments/:id/downvote', (req, res) => {
+    try {
+        const { id } = req.params;
+        const comment = db.prepare('SELECT * FROM comments WHERE id = ?').get(id);
+        if (!comment) return res.status(404).json({ success: false, error: '댓글을 찾을 수 없습니다' });
+
+        db.prepare('UPDATE comments SET score = score - 1 WHERE id = ?').run(id);
+        const updated = db.prepare('SELECT * FROM comments WHERE id = ?').get(id);
+        res.json({ success: true, data: updated, message: '댓글 다운보트 완료' });
+    } catch (error) {
+        res.status(500).json({ success: false, error: '서버 에러' });
+    }
+});
+
 module.exports = router;
