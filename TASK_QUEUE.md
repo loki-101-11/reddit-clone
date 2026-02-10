@@ -13,28 +13,28 @@
 
 ---
 
-### 🔄 IN_PROGRESS
+### ✅ COMPLETED
 #### TASK-003: 데이터베이스 스키마 설정
-- **파일**: `db/schema.sql`, `db/init.js`
-- **작업**:
+- **완료 날짜**: 2026-02-10
+- **작업 내용**:
   1. posts 테이블 (id, title, content, author, score, community, created_at)
   2. comments 테이블 (id, post_id, parent_id, content, author, score, created_at)
   3. communities 테이블 (id, name, description, created_at)
   4. init.js로 DB 초기화 함수
-- **검증**: `node db/init.js` 실행 후 reddit.db 파일 생성
+- **검증**: `node db/init.js` 실행 후 reddit.db 파일 생성 (4개 초기 커뮤니티 포함)
 
 ---
 
-### 📝 PENDING
-
-#### TASK-003: 데이터베이스 스키마 설정
-- **파일**: `db/schema.sql`, `db/init.js`
+### 🔄 IN_PROGRESS
+#### TASK-004: API 라우트 - 게시글 CRUD
+- **파일**: `routes/posts.js`
 - **작업**:
-  1. posts 테이블 (id, title, content, author, score, community, created_at)
-  2. comments 테이블 (id, post_id, parent_id, content, author, score, created_at)
-  3. communities 테이블 (id, name, description, created_at)
-  4. init.js로 DB 초기화 함수
-- **검증**: `node db/init.js` 실행 후 reddit.db 파일 생성
+  1. GET /api/posts - 전체 조회
+  2. GET /api/posts/:id - 단일 조회
+  3. POST /api/posts - 생성
+  4. PUT /api/posts/:id - 수정
+  5. DELETE /api/posts/:id - 삭제
+- **검증**: curl로 각 엔드포인트 테스트
 
 #### TASK-004: API 라우트 - 게시글 CRUD
 - **파일**: `routes/posts.js`
@@ -123,6 +123,6 @@
 
 ## 📊 진행 상태
 - 총 작업: 12개
-- 완료: 0개
-- 진행 중: 0개
-- 대기: 12개
+- 완료: 1개
+- 진행 중: 1개
+- 대기: 10개
