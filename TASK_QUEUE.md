@@ -149,7 +149,51 @@
 ---
 
 ## 📊 진행 상태
-- 총 작업: 12개
-- 완료: 7개
-- 진행 중: 1개
-- 대기: 4개
+- 총 작업: 13개
+- 완료: 8개
+- 진행 중: 0개
+- 대기: 5개
+
+---
+
+### 🔄 PENDING
+#### TASK-013: 사용자 인증 및 권한 관리
+- **파일**: `routes/auth.js`, `db/schema.sql`, `public/js/auth.js`
+- **작업**:
+  1. 사용자 회원가입/로그인 API 구현
+  2. JWT 토큰 발급 및 검증
+  3. 게시글/댓글 작성자 권한 검사
+  4. 로그인 상태 유지 (localStorage)
+- **검증**: 회원가입, 로그인, 로그아웃, 권한 검사 테스트
+
+#### TASK-014: 검색 기능 구현
+- **파일**: `routes/search.js`, `public/js/search.js`
+- **작업**:
+  1. 게시글 제목/내용 검색 API
+  2. 댓글 검색 API
+  3. 검색 결과 UI 렌더링
+- **검증**: 검색어 입력 및 결과 표시 테스트
+
+#### TASK-015: 알림 시스템
+- **파일**: `routes/notifications.js`, `db/schema.sql`
+- **작업**:
+  1. 댓글 알림 (답글이 달리면 알림)
+  2. 좋아요 알림 (게시글이 업보트되면 알림)
+  3. 알림 목록 UI
+- **검증**: 알림 생성 및 표시 테스트
+
+#### TASK-016: 게시글 인덱싱 및 검색 최적화
+- **파일**: `db/index.js`, `routes/search.js`
+- **작업**:
+  1. SQLite FTS5 (Full-Text Search) 활성화
+  2. 게시글/댓글 텍스트 인덱싱
+  3. 검색 성능 최적화
+- **검증**: 대량 데이터 검색 성능 테스트
+
+#### TASK-017: 배포 자동화
+- **파일**: `Dockerfile`, `docker-compose.yml`, `.github/workflows/deploy.yml`
+- **작업**:
+  1. Docker 이미지 빌드
+  2. GitHub Actions CI/CD 설정
+  3. 자동 배포 파이프라인 구축
+- **검증**: Docker 빌드 및 배포 테스트
