@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 상세 - Reddit Clone</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 헤더 -->
+    <header class="header">
+        <div class="header-left">
+            <a href="index.html" class="logo-link">
+                <h1 class="logo">Reddit Clone</h1>
+            </a>
+        </div>
+        <div class="header-center">
+            <div class="search-bar">
+                <input type="text" placeholder="검색..." id="searchInput">
+                <button id="searchBtn">🔍</button>
+            </div>
+        </div>
+        <div class="header-right">
+            <button id="createPostBtn">+ 게시글 작성</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- 사이드바 -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3>커뮤니티</h3>
+                <ul id="communityList" class="community-list">
+                    <!-- 커뮤니티 목록이 여기에 동적으로 추가됨 -->
+                </ul>
+            </div>
+        </aside>
+
+        <!-- 메인 피드 -->
+        <main class="main-content">
+            <!-- 뒤로가기 버튼 -->
+            <div class="back-button">
+                <button id="backBtn">← 뒤로가기</button>
+            </div>
+
+            <!-- 게시글 상세 -->
+            <article id="postDetail" class="post-card">
+                <!-- 게시글이 여기에 동적으로 추가됨 -->
+            </article>
+
+            <!-- 댓글 섹션 -->
+            <div class="comments-section">
+                <h3>댓글</h3>
+                <div id="commentsList" class="comments-list">
+                    <!-- 댓글이 여기에 동적으로 추가됨 -->
+                </div>
+
+                <!-- 댓글 작성 폼 -->
+                <div class="comment-form">
+                    <textarea id="commentInput" placeholder="댓글을 작성하세요..."></textarea>
+                    <button id="submitCommentBtn">댓글 작성</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 게시글 작성 모달 -->
+    <div id="createPostModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>새 게시글 작성</h2>
+                <button id="closeModalBtn" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="createPostForm">
+                    <div class="form-group">
+                        <label for="postTitle">제목</label>
+                        <input type="text" id="postTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="postContent">내용</label>
+                        <textarea id="postContent" rows="6" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="postCommunity">커뮤니티</label>
+                        <select id="postCommunity" required>
+                            <!-- 커뮤니티 목록이 여기에 동적으로 추가됨 -->
+                        </select>
+                    </div>
+                    <button type="submit" class="submit-btn">게시글 작성</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/post.js"></script>
+</body>
+</html>
