@@ -33,18 +33,32 @@
   5. DELETE /api/posts/:id - 삭제
 - **검증**: curl로 각 엔드포인트 테스트 완료 (Port 3001)
 
----
+#### TASK-005: API 라우트 - 투표
+- **완료 날짜**: 2026-02-10
+- **작업 내용**:
+  1. POST /api/posts/:id/upvote - 게시글 업보트
+  2. POST /api/posts/:id/downvote - 게시글 다운보트
+  3. score 업데이트 로직 구현
+- **검증**: curl로 투표 후 점수 변경 확인 완료
+  - 업보트: score +1
+  - 다운보트: score -1
+  - 게시글 존재하지 않을 때 404 응답
 
-### 🔄 IN_PROGRESS
 #### TASK-006: API 라우트 - 댓글
-- **파일**: `routes/comments.js`
-- **작업**:
+- **완료 날짜**: 2026-02-10
+- **작업 내용**:
   1. GET /api/posts/:id/comments - 댓글 조회
   2. POST /api/posts/:id/comments - 댓글 작성
   3. DELETE /api/comments/:id - 댓글 삭제
   4. 대댓글 지원 (parent_id)
-- **검증**: curl로 댓글 CRUD 테스트
+- **검증**: curl로 댓글 CRUD 테스트 완료
+  - 댓글 작성 및 조회 정상 작동
+  - 대댓글 생성 및 계층 구조 유지
+  - 대댓글이 있는 댓글 삭제 방지 (유효성 검사)
 
+---
+
+### 🔄 IN_PROGRESS
 #### TASK-007: API 라우트 - 커뮤니티
 - **파일**: `routes/communities.js`
 - **작업**:
@@ -105,6 +119,6 @@
 
 ## 📊 진행 상태
 - 총 작업: 12개
-- 완료: 5개
+- 완료: 6개
 - 진행 중: 1개
-- 대기: 6개
+- 대기: 5개

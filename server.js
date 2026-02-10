@@ -14,8 +14,10 @@ app.use(express.json());
 // API 라우트 (static 미들웨어보다 먼저)
 const postsRouter = require('./routes/posts');
 const votesRouter = require('./routes/votes');
+const commentsRouter = require('./routes/comments');
 app.use('/api/posts', postsRouter);
 app.use('/api/posts', votesRouter);
+app.use('/api', commentsRouter);
 
 console.log('API routes registered');
 
