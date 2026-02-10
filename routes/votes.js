@@ -4,6 +4,9 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db/db.js');
+const jwt = require('jsonwebtoken');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
 console.log('Votes router loaded');
 
@@ -30,6 +33,48 @@ router.post('/:id/upvote', (req, res) => {
         `).run(id);
 
         const updatedPost = db.prepare('SELECT * FROM posts WHERE id = ?').get(id);
+
+        // 알림 생성 로직
+        try {
+            let voterName = 'Someone';
+            let isSelfVote = false;
+
+            // 토큰에서 투표자 정보 확인
+            const authHeader = req.headers.authorization;
+            if (authHeader && authHeader.startsWith('Bearer ')) {
+                const token = authHeader.split(' ')[1];
+                try {
+                    const decoded = jwt.verify(token, JWT_SECRET);
+                    voterName = decoded.username;
+                    if (voterName === post.author) {
+                        isSelfVote = true;
+                    }
+                } catch (e) {
+                    // 토큰 검증 실패 시 무시
+                }
+            }
+
+            // 본인 게시글 투표가 아닌 경우에만 알림
+            if (!isSelfVote) {
+                const targetUser = db.prepare('SELECT id FROM users WHERE username = ?').get(post.author);
+                
+                if (targetUser) {
+                    db.prepare(`
+                        INSERT INTO notifications (user_id, type, title, content, related_id, related_type)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    `).run(
+                        targetUser.id, 
+                        'upvote_post', 
+                        `"${post.title}" 게시글이 추천받았습니다`, 
+                        `${voterName}님이 회원님의 게시글을 추천했습니다.`, 
+                        id, 
+                        'post'
+                    );
+                }
+            }
+        } catch (notiError) {
+            console.error('알림 생성 실패:', notiError);
+        }
 
         res.json({
             success: true,

@@ -1,0 +1,78 @@
+name: Reddit Clone CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run tests (placeholder)
+      run: echo "Tests would run here"
+      continue-on-error: true
+
+    - name: Build Docker image
+      run: docker build -t reddit-clone:${{ github.sha }} .
+
+    - name: Run Docker container
+      run: docker run -d -p 3000:3000 --name reddit-test reddit-clone:${{ github.sha }}
+
+    - name: Test API endpoints
+      run: |
+        sleep 5
+        curl -f http://localhost:3000/api/posts || exit 1
+        curl -f http://localhost:3000/api/communities || exit 1
+
+    - name: Stop container
+      if: always()
+      run: docker stop reddit-test || true
+      shell: bash
+
+    - name: Remove container
+      if: always()
+      run: docker rm reddit-test || true
+      shell: bash
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Deploy to server
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.DEPLOY_HOST }}
+        username: ${{ secrets.DEPLOY_USER }}
+        key: ${{ secrets.DEPLOY_SSH_KEY }}
+        script: |
+          cd /opt/reddit-clone
+          git pull origin main
+          docker-compose down
+          docker-compose up -d --build
+          docker system prune -f
+
+    - name: Notify deployment status
+      if: always()
+      run: |
+        echo "Deployment completed"
+        # Slack/Slack/Email 알림 추가 가능

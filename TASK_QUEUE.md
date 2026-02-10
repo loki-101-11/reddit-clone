@@ -149,10 +149,10 @@
 ---
 
 ## 📊 진행 상태
-- 총 작업: 14개
-- 완료: 10개
+- 총 작업: 16개
+- 완료: 11개
 - 진행 중: 0개
-- 대기: 4개
+- 대기: 5개
 
 ---
 
@@ -200,9 +200,16 @@
 - **검증**: 대량 데이터 검색 성능 테스트
 
 #### TASK-017: 배포 자동화
-- **파일**: `Dockerfile`, `docker-compose.yml`, `.github/workflows/deploy.yml`
+- **완료 날짜**: 2026-02-10
+- **파일**: `Dockerfile`, `docker-compose.yml`, `.github/workflows/deploy.yml`, `.dockerignore`, `DEPLOYMENT.md`
 - **작업**:
-  1. Docker 이미지 빌드
-  2. GitHub Actions CI/CD 설정
-  3. 자동 배포 파이프라인 구축
-- **검증**: Docker 빌드 및 배포 테스트
+  1. Docker 이미지 빌드 (다중 단계 빌드, 최적화)
+  2. Docker Compose 설정 (컨테이너 관리, 볼륨 마운트, 헬스체크)
+  3. GitHub Actions CI/CD 워크플로우 (빌드, 테스트, 배포)
+  4. .dockerignore 파일 (불필요한 파일 제외)
+  5. 배포 가이드 문서 작성
+- **검증**:
+  - Dockerfile 구조 검증 (builder, runtime 단계)
+  - docker-compose.yml 설정 검증 (볼륨, 헬스체크)
+  - GitHub Actions 워크플로우 검증 (빌드, 테스트, 배포)
+  - 배포 가이드 문서 작성

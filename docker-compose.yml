@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  reddit-clone:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: reddit-clone
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    volumes:
+      # DB 파일 호스트와 컨테이너 간 공유
+      - reddit-db:/app/db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/api/posts"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  reddit-db:
+    driver: local

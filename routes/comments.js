@@ -95,12 +95,62 @@ router.post('/posts/:id/comments', (req, res) => {
         }
 
         // 댓글 생성
-        const result = db.prepare(`
+        const insertStmt = db.prepare(`
             INSERT INTO comments (post_id, parent_id, content, author, score)
             VALUES (?, ?, ?, ?, 0)
-        `).run(id, parent_id || null, content.trim(), author.trim());
+        `);
+        const result = insertStmt.run(id, parent_id || null, content.trim(), author.trim());
+        const newCommentId = result.lastInsertRowid;
 
-        const newComment = db.prepare('SELECT * FROM comments WHERE id = ?').get(result.lastInsertRowid);
+        const newComment = db.prepare('SELECT * FROM comments WHERE id = ?').get(newCommentId);
+
+        // 알림 생성 로직
+        try {
+            const currentAuthor = author.trim();
+            let targetAuthor = null;
+            let notificationType = '';
+            let notificationTitle = '';
+
+            if (parent_id) {
+                // 대댓글인 경우 부모 댓글 작성자에게 알림
+                const parentComment = db.prepare('SELECT author FROM comments WHERE id = ?').get(parent_id);
+                if (parentComment && parentComment.author !== currentAuthor) {
+                    targetAuthor = parentComment.author;
+                    notificationType = 'reply_comment';
+                    notificationTitle = '내 댓글에 답글이 달렸습니다';
+                }
+            } else {
+                // 게시글 댓글인 경우 게시글 작성자에게 알림
+                const targetPost = db.prepare('SELECT author, title FROM posts WHERE id = ?').get(id);
+                if (targetPost && targetPost.author !== currentAuthor) {
+                    targetAuthor = targetPost.author;
+                    notificationType = 'reply_post';
+                    notificationTitle = `내 게시글 "${targetPost.title}"에 댓글이 달렸습니다`;
+                }
+            }
+
+            if (targetAuthor) {
+                // 대상 사용자의 ID 조회
+                const targetUser = db.prepare('SELECT id FROM users WHERE username = ?').get(targetAuthor);
+                
+                if (targetUser) {
+                    db.prepare(`
+                        INSERT INTO notifications (user_id, type, title, content, related_id, related_type)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    `).run(
+                        targetUser.id, 
+                        notificationType, 
+                        notificationTitle, 
+                        content.trim().substring(0, 50) + (content.length > 50 ? '...' : ''), 
+                        newCommentId, 
+                        'comment'
+                    );
+                }
+            }
+        } catch (notiError) {
+            console.error('알림 생성 실패:', notiError);
+            // 알림 실패가 댓글 작성을 막지는 않음
+        }
 
         res.status(201).json({
             success: true,
