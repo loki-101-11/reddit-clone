@@ -23,29 +23,19 @@
   4. init.js로 DB 초기화 함수
 - **검증**: `node db/init.js` 실행 후 reddit.db 파일 생성 (4개 초기 커뮤니티 포함)
 
+#### TASK-004: API 라우트 - 게시글 CRUD
+- **완료 날짜**: 2026-02-10
+- **작업 내용**:
+  1. GET /api/posts - 전체 조회
+  2. GET /api/posts/:id - 단일 조회
+  3. POST /api/posts - 생성
+  4. PUT /api/posts/:id - 수정
+  5. DELETE /api/posts/:id - 삭제
+- **검증**: curl로 각 엔드포인트 테스트 완료 (Port 3001)
+
 ---
 
 ### 🔄 IN_PROGRESS
-#### TASK-004: API 라우트 - 게시글 CRUD
-- **파일**: `routes/posts.js`
-- **작업**:
-  1. GET /api/posts - 전체 조회
-  2. GET /api/posts/:id - 단일 조회
-  3. POST /api/posts - 생성
-  4. PUT /api/posts/:id - 수정
-  5. DELETE /api/posts/:id - 삭제
-- **검증**: curl로 각 엔드포인트 테스트
-
-#### TASK-004: API 라우트 - 게시글 CRUD
-- **파일**: `routes/posts.js`
-- **작업**:
-  1. GET /api/posts - 전체 조회
-  2. GET /api/posts/:id - 단일 조회
-  3. POST /api/posts - 생성
-  4. PUT /api/posts/:id - 수정
-  5. DELETE /api/posts/:id - 삭제
-- **검증**: curl로 각 엔드포인트 테스트
-
 #### TASK-005: API 라우트 - 투표
 - **파일**: `routes/votes.js`
 - **작업**:
@@ -123,6 +113,6 @@
 
 ## 📊 진행 상태
 - 총 작업: 12개
-- 완료: 1개
+- 완료: 4개
 - 진행 중: 1개
-- 대기: 10개
+- 대기: 7개
