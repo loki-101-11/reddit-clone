@@ -36,14 +36,6 @@
 ---
 
 ### 🔄 IN_PROGRESS
-#### TASK-005: API 라우트 - 투표
-- **파일**: `routes/votes.js`
-- **작업**:
-  1. POST /api/posts/:id/upvote
-  2. POST /api/posts/:id/downvote
-  3. score 업데이트 로직
-- **검증**: curl로 투표 후 점수 변경 확인
-
 #### TASK-006: API 라우트 - 댓글
 - **파일**: `routes/comments.js`
 - **작업**:
@@ -113,6 +105,6 @@
 
 ## 📊 진행 상태
 - 총 작업: 12개
-- 완료: 4개
+- 완료: 5개
 - 진행 중: 1개
-- 대기: 7개
+- 대기: 6개

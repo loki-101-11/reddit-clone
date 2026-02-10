@@ -4,11 +4,18 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // 미들웨어 설정
+app.use((req, res, next) => {
+    console.error(`[DEBUG] Request: ${req.method} ${req.url}`);
+    next();
+});
+
 app.use(express.json());
 
 // API 라우트 (static 미들웨어보다 먼저)
 const postsRouter = require('./routes/posts');
+const votesRouter = require('./routes/votes');
 app.use('/api/posts', postsRouter);
+app.use('/api/posts', votesRouter);
 
 console.log('API routes registered');
 
