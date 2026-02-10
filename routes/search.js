@@ -3,7 +3,7 @@
 
 const express = require('express');
 const router = express.Router();
-const db = require('../db');
+const db = require('../db/db.js');
 
 /**
  * GET /api/search?q=검색어
