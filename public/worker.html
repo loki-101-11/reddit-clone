@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reddit Clone - Worker Management</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .worker-dashboard {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .status-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .status-active { background-color: #4CAF50; }
+        .status-inactive { background-color: #F44336; }
+        
+        .log-container {
+            background-color: #1a1a1b;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 10px;
+            height: 400px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid #333;
+        }
+        .log-time { color: #888; margin-right: 10px; }
+        
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .btn-toggle {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-enable { background-color: #4CAF50; color: white; }
+        .btn-disable { background-color: #F44336; color: white; }
+        .btn-trigger { background-color: #0079D3; color: white; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <span class="logo-icon">🤖</span>
+                Worker Manager
+            </a>
+            <div class="user-actions">
+                <a href="/" class="btn btn-secondary">Back to Site</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="worker-dashboard">
+        <div class="status-card">
+            <h2>Worker Status</h2>
+            <div class="controls">
+                <button id="toggleBtn" class="btn-toggle">Loading...</button>
+                <button id="triggerBtn" class="btn-toggle btn-trigger">Trigger Action Now</button>
+            </div>
+            <p>Status: <span id="statusText">Checking...</span> <span id="statusIcon" class="status-indicator"></span></p>
+            <p>Last Run: <span id="lastRunTime">-</span></p>
+        </div>
+
+        <div class="logs-section">
+            <h3>Activity Logs</h3>
+            <div id="logContainer" class="log-container">
+                <!-- Logs will appear here -->
+            </div>
+        </div>
+    </main>
+
+    <script src="js/worker.js"></script>
+</body>
+</html>

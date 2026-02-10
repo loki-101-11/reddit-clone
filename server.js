@@ -14,6 +14,7 @@ const communitiesRouter = require('./routes/communities');
 const authRouter = require('./routes/auth');
 const searchRouter = require('./routes/search');
 const notificationsRouter = require('./routes/notifications');
+const workerRouter = require('./routes/worker');
 app.use('/api/posts', postsRouter);
 app.use('/api/posts', votesRouter);
 app.use('/api', commentsRouter);
@@ -21,6 +22,7 @@ app.use('/api/communities', communitiesRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/search', searchRouter);
 app.use('/api/notifications', notificationsRouter);
+app.use('/api/worker', workerRouter);
 
 console.log('API routes registered');
 
